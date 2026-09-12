@@ -3,6 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\Controller\ProductImageUploadController;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +17,21 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Table(name: "products")]
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(),
+        new Patch(),
+        new Delete(),
+        new Post(
+            uriTemplate: '/products/{id}/upload_image',
+            controller: ProductImageUploadController::class,
+            deserialize: false,
+            inputFormats: ['multipart' => ['multipart/form-data']]
+        )
+    ]
+)]
 #[Vich\Uploadable]
 class Product
 {
